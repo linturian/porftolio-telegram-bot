@@ -148,8 +148,9 @@ def getPrice(t):
     dailyChange = getSubStringBetweenMarket((soup.find('span', {'data-reactid':'16'}).string))
     return [price, dailyChange]
 
-def compute(my_portfolio):
-#   my_portfolio = {stock: [qty, paid,curr price, daily change, profit/loss]}
+def compute(portfolio):
+    # my_portfolio = {stock: [qty, paid,curr price, daily change, profit/loss]}
+    my_portfolio = portfolio.copy()
     total = 0
     total_paid = 0
     for k in my_portfolio.keys():
@@ -188,12 +189,13 @@ def generate_email(my_portfolio, email_address):
     row_body = generateRow(data)
     sendEmail(row_body, email_address)
 
-    
-# def main():
-#     my_portfolio = {'AMZN': [5,1895.85], 'BLK': [10, 538.505],'TWTR': [280, 36.2], 'C':[50, 79.8]}
-#     data = compute(my_portfolio)
-#     row_body = generateRow(data)
-#     sendEmail(row_body)
+
+def main():
+    my_portfolio = {'AMZN': [5,1895.85], 'BLK': [10, 538.505],'TWTR': [280, 36.2], 'C':[50, 79.8]}
+    data = compute(my_portfolio)
+    print(data)
+    row_body = generateRow(data)
+    # sendEmail(row_body)
 
 # while True:
 #     now = datetime.datetime.now()
