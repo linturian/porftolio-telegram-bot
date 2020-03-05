@@ -1,26 +1,31 @@
+import csv
 import logging
 
-import pandas as pd
 import requests
 import telegram
 from tabulate import tabulate
-from telegram import ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler
 
 from PortfolioUpdate import generate_email, compute
 from User import User
 
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 logger = logging.getLogger(__name__)
 
 # ---------------Global Variable-------------------------
 user_dict = {}
+symbol_dict = {}
+with open('./constituents_csv.csv', newline='') as csvfile:
+    spamreader = csv.reader(csvfile)
+    for row in spamreader:
+        symbol_dict[row[0]] = row[1]
 
-s = pd.read_csv('./constituents_csv.csv')['Symbol']
-s.unique()
-symbol_set = set(s)
+
+# s = pd.read_csv('./constituents_csv.csv')['Symbol']
+# s.unique()
+# symbol_set = set(s)
 
 
 # ------------------------------------Private Function-------------
@@ -38,7 +43,7 @@ def log(message):
 
 
 def validateStock(bot, chat_id, ticker):
-    if ticker not in symbol_set:
+    if ticker not in symbol_dict:
         bot.send_message(chat_id=chat_id, text="Your stock is currently not supported!")
         return False
     return True
@@ -63,7 +68,8 @@ def add(update, context):
     if validateStock(bot, chat_id, stock_symbol):
         stock = [stock_symbol, qty, price]
         user.addStock(stock)
-        bot.send_message(chat_id=chat_id, text="Added {} || Qty: {} || Price: {}".format(stock[0], stock[1], stock[2]))
+        bot.send_message(chat_id=chat_id,
+                         text="Added {} || Symbol: {} || Qty: {} || Price: {}".format(symbol_dict[stock[0]], stock[0], stock[1], stock[2]))
 
 
 def remove(update, context):

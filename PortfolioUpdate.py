@@ -1,11 +1,11 @@
-from bs4 import BeautifulSoup
-import urllib.request
 import re
-import smtplib, ssl
-from email.mime.text import MIMEText
+import smtplib
+import ssl
+import urllib.request
 from email.mime.multipart import MIMEMultipart
-from tabulate import tabulate
-import datetime
+from email.mime.text import MIMEText
+
+from bs4 import BeautifulSoup
 
 
 def sendEmail(row_body, email_address):
