@@ -5,7 +5,6 @@ import logging
 import telegram
 import json
 from tabulate import tabulate
-import imgkit
 from bs4 import BeautifulSoup
 import urllib.request
 from PortfolioUpdate import generate_email, getPrice, compute
