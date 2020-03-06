@@ -4,6 +4,7 @@ import ssl
 import urllib.request
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import time
 
 from bs4 import BeautifulSoup
 
@@ -138,8 +139,26 @@ def getSubStringBetweenMarket(s):
     pattern = "\((.*?)\)"
     substring = re.search(pattern, s).group(1)
     return substring
-    
+
+def cache(f):
+    class cache(dict):
+        def __init__(self, f):
+            self.f = f
+        def __call__(self, key):
+            price, daily_change, last_updated = self[key]
+            if time.mktime(time.gmtime()) - last_updated >= 1 * 60:
+              self.call_f(key)
+            return self[key][:2]
+        def __missing__(self, key):
+            return self.call_f(key)
+        def call_f(self, key):
+            ret = self[key] = self.f(key) + [time.mktime(time.gmtime())]
+            return ret
+    return cache(f)
+
+@cache
 def getPrice(t):
+    print('in getPrice')
     url = "https://sg.finance.yahoo.com/quote/{ticket}?p={ticket}".format(ticket=t)
     response = urllib.request.urlopen(url)
     html = response.read()
